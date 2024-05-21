@@ -17,7 +17,8 @@ import java.util.List;
 
 import cavalcante.gouvea.lista.R;
 import cavalcante.gouvea.lista.adapter.MyAdapter;
-import cavalcante.gouvea.lista.model.Myitem;
+import cavalcante.gouvea.lista.model.MyItem;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == NEW_ITEM_REQUEST) {
             if(resultCode == Activity.RESULT_OK) {
-                myItem myItem = new MyItem();
+                MyItem myItem = new MyItem();
                 myItem.title = data.getStringExtra("title");
                 myItem.description = data.getStringExtra("description");
                 myItem.photo = data.getData();
@@ -45,8 +46,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FloatingActionButton fabAddItem = findViewById(R.id.fabAddNewItem);
-        fabAddItem.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fabAddNewItem = findViewById(R.id.fabAddNewItem);
+        fabAddNewItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(MainActivity.this, NewItemActivity.class);
@@ -55,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         RecyclerView rvItens = findViewById(R.id.rvItens);
-        myAdapter = new MyAdapter(this, itens);
+        myAdapter = new MyAdapter(this, this.itens);
         rvItens.setAdapter(myAdapter);
         rvItens.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
