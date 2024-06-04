@@ -5,7 +5,7 @@ import android.net.Uri; // Importa a classe Uri do pacote android.net
 // Declaração da classe pública MyItem
 public class MyItem {
     // Declaração do campo público 'photo' do tipo Uri
-    public Uri photo;
+    public Bitmap photo;
 
     // Declaração do campo público 'title' do tipo String
     public String title;

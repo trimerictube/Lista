@@ -13,12 +13,14 @@ import android.view.View;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
 import cavalcante.gouvea.lista.R;
 import cavalcante.gouvea.lista.adapter.MyAdapter;
 import cavalcante.gouvea.lista.model.MyItem;
+import cavalcante.gouvea.lista.util.Util;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -44,12 +46,15 @@ public class MainActivity extends AppCompatActivity {
                 MyItem myItem = new MyItem();
                 myItem.title = data.getStringExtra("title");
                 myItem.description = data.getStringExtra("description");
-                myItem.photo = data.getData();
+                Uri selectedPhotoURI = data.getData();
 
-                // Adiciona o novo item à lista
+                try {
+                    Bitmap photo = Util.getBitmap(MainActivity.this,selectedPhotoURI,100,100);
+                    myItem.photo = photo;
+                }   catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
                 itens.add(myItem);
-
-                // Notifica o adaptador que um novo item foi inserido
                 myAdapter.notifyItemInserted(itens.size()-1);
             }
         }
