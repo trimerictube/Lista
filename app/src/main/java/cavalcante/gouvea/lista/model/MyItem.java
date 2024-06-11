@@ -1,6 +1,6 @@
 package cavalcante.gouvea.lista.model; // Define o pacote da classe
 
-import android.net.Uri; // Importa a classe Uri do pacote android.net
+import android.graphics.Bitmap; // Importa a classe Bitmap para manipular bitmaps
 
 // Declaração da classe pública MyItem
 public class MyItem {

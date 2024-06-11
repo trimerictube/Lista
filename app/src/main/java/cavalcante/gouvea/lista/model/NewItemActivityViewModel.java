@@ -1,6 +1,10 @@
 package cavalcante.gouvea.lista.model;
+import android.net.Uri;
 
-public class NewItemActivityViewModel {
+import androidx.lifecycle.ViewModel;
+
+
+public class NewItemActivityViewModel extends ViewModel {
     Uri selectPhotoLocation = null;
     public Uri getSelectPhotoLocation() {
         return selectPhotoLocation;

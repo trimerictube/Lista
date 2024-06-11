@@ -1,28 +1,31 @@
-package cavalcante.gouvea.lista.activity;
+package cavalcante.gouvea.lista.activity; // Define o pacote da classe
 
 // Importações necessárias para a atividade
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.app.AppCompatActivity; // Importa a classe AppCompatActivity para suporte à ActionBar
+import androidx.lifecycle.ViewModelProvider; // Importa a classe ViewModelProvider para usar ViewModels
+import androidx.recyclerview.widget.DividerItemDecoration; // Importa a classe DividerItemDecoration para adicionar divisores no RecyclerView
+import androidx.recyclerview.widget.LinearLayoutManager; // Importa a classe LinearLayoutManager para gerenciar o layout do RecyclerView
+import androidx.recyclerview.widget.RecyclerView; // Importa a classe RecyclerView
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
+import android.app.Activity; // Importa a classe Activity
+import android.content.Intent; // Importa a classe Intent para manipular intenções
+import android.net.Uri; // Importa a classe Uri para manipular URIs
+import android.os.Bundle; // Importa a classe Bundle para passar dados entre atividades
+import android.view.View; // Importa a classe View
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton; // Importa a classe FloatingActionButton
 
-import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.FileNotFoundException; // Importa a classe FileNotFoundException (não usada no código)
+import java.util.ArrayList; // Importa a classe ArrayList para manipular listas
+import java.util.List; // Importa a interface List
 
-import cavalcante.gouvea.lista.R;
-import cavalcante.gouvea.lista.adapter.MyAdapter;
-import cavalcante.gouvea.lista.model.MyItem;
-import cavalcante.gouvea.lista.util.Util;
+import cavalcante.gouvea.lista.R; // Importa o arquivo de recursos R
+import cavalcante.gouvea.lista.adapter.MyAdapter; // Importa a classe MyAdapter
+import cavalcante.gouvea.lista.model.MainActivityViewModel; // Importa a classe MainActivityViewModel
+import cavalcante.gouvea.lista.model.MyItem; // Importa a classe MyItem
+import cavalcante.gouvea.lista.util.Util; // Importa a classe Util (não usada no código)
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity { // Define a classe MainActivity que estende AppCompatActivity
 
     // Constante para identificar a requisição de um novo item
     static int NEW_ITEM_REQUEST = 1;
@@ -48,12 +51,11 @@ public class MainActivity extends AppCompatActivity {
                 myItem.description = data.getStringExtra("description");
                 Uri selectedPhotoURI = data.getData();
 
-                try {
-                    Bitmap photo = Util.getBitmap(MainActivity.this,selectedPhotoURI,100,100);
-                    myItem.photo = photo;
-                }   catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
+                // Obtém a instância do ViewModel
+                MainActivityViewModel vm = new ViewModelProvider(this).get(MainActivityViewModel.class);
+                List<MyItem> itens = vm.getItens();
+
+                // Adiciona o novo item à lista e notifica o adaptador
                 itens.add(myItem);
                 myAdapter.notifyItemInserted(itens.size()-1);
             }
@@ -83,6 +85,10 @@ public class MainActivity extends AppCompatActivity {
 
         // Referência ao RecyclerView que mostrará os itens
         RecyclerView rvItens = findViewById(R.id.rvItens);
+
+        // Obtém a instância do ViewModel
+        MainActivityViewModel vm = new ViewModelProvider(this).get(MainActivityViewModel.class);
+        List<MyItem> itens = vm.getItens();
 
         // Cria o adaptador passando o contexto e a lista de itens
         myAdapter = new MyAdapter(this, this.itens);
