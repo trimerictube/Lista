@@ -16,15 +16,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class Util {
-    /**
-     * Calcula o numero de colunas que cabem na tela ao usar o tipo de
-     * visualizacao GRID no RecycleView
-     *
-     * @param context contexto utilizado, geralmente instancia da activity que
-     *                contem o RecycleView
-     * @param columnWidthDp largura do item do grid em dp
-     * @return numero de colunas a serem usadas no GridLayoutManager
-     */
+
     public static int calculateNoOfColumns(Context context, float columnWidthDp) { // For example columnWidthdp=180
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float screenWidthDp = displayMetrics.widthPixels;
@@ -32,26 +24,12 @@ public class Util {
         return noOfColumns;
     }
 
-    /**
-     * Carrega um arquivo de imagem em um bitmap sem realizar qualquer tipo de escala.
-     * @param imagePath caminho local de onde esta localizado o arquivo de imagem.
-     * @return o bitmap.
-     */
     public static Bitmap getBitmap(String imagePath) {
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inJustDecodeBounds = false;
         return BitmapFactory.decodeFile(imagePath, bmOptions);
     }
 
-    /**
-     * Carrega um arquivo de imagem e aplica um fator de escala.
-     * @param imagePath caminho local de onde esta localizado o arquivo de imagem
-     * @param scaleFactor fator de escala a ser aplicado na imagem. Se
-     *                    quiser uma imagem com metade do tamanho, deve
-     *                    usar o valor 2 como entrada. Uma imagem com um
-     *                    quarto do tamanho deve usar 4 como entrada.
-     * @return o bitmap
-     */
     public static Bitmap getBitmap(String imagePath, int scaleFactor) {
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inJustDecodeBounds = false;
@@ -59,13 +37,6 @@ public class Util {
         return BitmapFactory.decodeFile(imagePath, bmOptions);
     }
 
-    /**
-     * Carrega um arquivo de imagem em um bitmap de tamanho definido.
-     * @param imagePath caminho local de onde esta localizado o arquivo de imagem.
-     * @param w largura que a imagem deve ter.
-     * @param h altura que a imagem deve ter.
-     * @return o bitmap
-     */
     public static Bitmap getBitmap(String imagePath, int w, int h) {
 
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
@@ -83,14 +54,7 @@ public class Util {
         return BitmapFactory.decodeFile(imagePath, bmOptions);
     }
 
-    /**
-     * Carrega uma imagem em um bitmap a partir de um URI.
-     * @param context contexto utilizado, geralmente instancia da activity que
-     *                chama a função
-     * @param imageLocation endereço URI da imagem
-     * @return o bitmap
-     * @throws FileNotFoundException caso a imagem não seja achada
-     */
+
     public static Bitmap getBitmap(Context context, Uri imageLocation) throws FileNotFoundException {
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inJustDecodeBounds = false;
@@ -100,19 +64,7 @@ public class Util {
         return BitmapFactory.decodeStream(is, null, bmOptions);
     }
 
-    /**
-     * Carrega uma imagem em um bitmap a partir de um URI.
-     * A imagem sofrerá escala de acordo com as dimensões escohidas.
-     * @param context contexto utilizado, geralmente instancia da activity que
-     *                chama a função
-     * @param imageLocation endereço URI da imagem
-     * @param scaleFactor fator de escala a ser aplicado na imagem. Se
-     *                    quiser uma imagem com metade do tamanho, deve
-     *                    usar o valor 2 como entrada. Uma imagem com um
-     *                    quarto do tamanho deve usar 4 como entrada.
-     * @return o bitmap
-     * @throws FileNotFoundException caso a imagem não seja achada
-     */
+
     public static Bitmap getBitmap(Context context, Uri imageLocation, int scaleFactor) throws FileNotFoundException {
         BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         bmOptions.inJustDecodeBounds = false;
@@ -122,17 +74,6 @@ public class Util {
         return BitmapFactory.decodeStream(is, null, bmOptions);
     }
 
-    /**
-     * Carrega uma imagem em um bitmap a partir de um URI.
-     * A imagem sofrerá escala de acordo com as dimensões escohidas.
-     * @param context contexto utilizado, geralmente instancia da activity que
-     *                chama a função
-     * @param imageLocation endereço URI da imagem
-     * @param w largura que a imagem deve ter
-     * @param h altura que a imagem deve ter
-     * @return o bitmap
-     * @throws FileNotFoundException caso a imagem não seja achada
-     */
     public static Bitmap getBitmap(Context context, Uri imageLocation, int w, int h) throws FileNotFoundException {
 
         InputStream is = context.getContentResolver().openInputStream(imageLocation);

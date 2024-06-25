@@ -7,8 +7,10 @@ import androidx.recyclerview.widget.RecyclerView; // Importa a classe RecyclerVi
 
 // Declaração da classe MyViewHolder que estende RecyclerView.ViewHolder
 public class MyViewHolder extends RecyclerView.ViewHolder {
-    public MyViewHolder(@NonNull View itemView){
-        super(itemView);
 
+    // Construtor da classe MyViewHolder que recebe um View como parâmetro
+    public MyViewHolder(@NonNull View itemView) {
+        // Chama o construtor da classe pai (RecyclerView.ViewHolder) passando o itemView
+        super(itemView);
     }
 }
