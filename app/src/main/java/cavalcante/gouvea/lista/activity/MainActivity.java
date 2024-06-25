@@ -1,114 +1,102 @@
-package cavalcante.gouvea.lista.activity; // Define o pacote da classe
+package cavalcante.gouvea.lista.activity;
 
 // Importações necessárias para a atividade
-import androidx.appcompat.app.AppCompatActivity; // Importa a classe AppCompatActivity para suporte à ActionBar
-import androidx.lifecycle.ViewModelProvider; // Importa a classe ViewModelProvider para usar ViewModels
-import androidx.recyclerview.widget.DividerItemDecoration; // Importa a classe DividerItemDecoration para adicionar divisores no RecyclerView
-import androidx.recyclerview.widget.LinearLayoutManager; // Importa a classe LinearLayoutManager para gerenciar o layout do RecyclerView
-import androidx.recyclerview.widget.RecyclerView; // Importa a classe RecyclerView
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity; // Importa a classe Activity
-import android.content.Intent; // Importa a classe Intent para manipular intenções
-import android.net.Uri; // Importa a classe Uri para manipular URIs
-import android.os.Bundle; // Importa a classe Bundle para passar dados entre atividades
-import android.view.View; // Importa a classe View
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton; // Importa a classe FloatingActionButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.io.FileNotFoundException; // Importa a classe FileNotFoundException (não usada no código)
-import java.util.ArrayList; // Importa a classe ArrayList para manipular listas
-import java.util.List; // Importa a interface List
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
 
-import cavalcante.gouvea.lista.R; // Importa o arquivo de recursos R
-import cavalcante.gouvea.lista.adapter.MyAdapter; // Importa a classe MyAdapter
-import cavalcante.gouvea.lista.model.MainActivityViewModel; // Importa a classe MainActivityViewModel
-import cavalcante.gouvea.lista.model.MyItem; // Importa a classe MyItem
-import cavalcante.gouvea.lista.util.Util; // Importa a classe Util (não usada no código)
+import cavalcante.gouvea.lista.R;
+import cavalcante.gouvea.lista.adapter.MyAdapter;
+import cavalcante.gouvea.lista.model.MainActivityViewModel;
+import cavalcante.gouvea.lista.model.MyItem;
+import cavalcante.gouvea.lista.util.Util;
 
-public class MainActivity extends AppCompatActivity { // Define a classe MainActivity que estende AppCompatActivity
+public class MainActivity extends AppCompatActivity {
 
-    // Constante para identificar a requisição de um novo item
+
     static int NEW_ITEM_REQUEST = 1;
+    List<MyItem> itens = new ArrayList<>(); //criando uma lista do tipo MyItem chamada itens
 
-    // Lista que armazena os itens
-    List<MyItem> itens = new ArrayList<>();
 
-    // Adaptador para o RecyclerView
+
     MyAdapter myAdapter;
 
-    // Método chamado quando a atividade recebe um resultado de outra atividade
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        // Verifica se o requestCode é o mesmo da requisição de novo item
-        if (requestCode == NEW_ITEM_REQUEST) {
-            // Verifica se o resultado foi OK
-            if(resultCode == Activity.RESULT_OK) {
-                // Cria um novo MyItem e preenche com os dados recebidos
-                MyItem myItem = new MyItem();
-                myItem.title = data.getStringExtra("title");
-                myItem.description = data.getStringExtra("description");
-                Uri selectedPhotoURI = data.getData();
-
-                // Obtém a instância do ViewModel
-                MainActivityViewModel vm = new ViewModelProvider(this).get(MainActivityViewModel.class);
-                List<MyItem> itens = vm.getItens();
-
-                // Adiciona o novo item à lista e notifica o adaptador
-                itens.add(myItem);
-                myAdapter.notifyItemInserted(itens.size()-1);
-            }
-        }
-    }
-
-    // Método chamado quando a atividade é criada
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Referência ao botão de ação flutuante para adicionar um novo item
-        FloatingActionButton fabAddNewItem = findViewById(R.id.fabAddNewItem);
-
-        // Define um listener para o botão de ação flutuante
-        fabAddNewItem.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fabAddNewItem = findViewById(R.id.fabAddNewItem); //criando um botão para adicionar novos itens
+        fabAddNewItem.setOnClickListener(new View.OnClickListener() { //escutador do botão
             @Override
-            public void onClick(View v) {
-                // Cria uma intenção para abrir a NewItemActivity
-                Intent i = new Intent(MainActivity.this, NewItemActivity.class);
-
-                // Inicia a atividade e espera um resultado
-                startActivityForResult(i, NEW_ITEM_REQUEST);
+            public void onClick(View v) { //função chamada quando o botão flutuante é apertado
+                Intent i = new Intent(MainActivity.this, NewItemActivity.class); //criando nova intent
+                startActivityForResult(i, NEW_ITEM_REQUEST); //espera a intent acima retornar o resultado
             }
         });
 
-        // Referência ao RecyclerView que mostrará os itens
-        RecyclerView rvItens = findViewById(R.id.rvItens);
+        RecyclerView rvItens = findViewById(R.id.rvItens); //define um conjunto visual de lista de itens
 
-        // Obtém a instância do ViewModel
         MainActivityViewModel vm = new ViewModelProvider(this).get(MainActivityViewModel.class);
         List<MyItem> itens = vm.getItens();
+        // O Viewmodel referente a mainActvityViewModel é obtido. Em seguida, a lista de itens é obtida a parir do Viewmodel e repassada para o Adapter
 
-        // Cria o adaptador passando o contexto e a lista de itens
-        myAdapter = new MyAdapter(this, this.itens);
+        myAdapter = new MyAdapter(this, itens); //cria um objeto da classe MyAdapter
+        rvItens.setAdapter(myAdapter); //configurando display da lista
+        rvItens.setHasFixedSize(true); //definindo o valor da lista como fixo
 
-        // Define o adaptador no RecyclerView
-        rvItens.setAdapter(myAdapter);
-
-        // Define que o RecyclerView terá um tamanho fixo
-        rvItens.setHasFixedSize(true);
-
-        // Cria um LayoutManager para o RecyclerView
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-
-        // Define o LayoutManager no RecyclerView
         rvItens.setLayoutManager(layoutManager);
 
-        // Cria uma decoração de divisor para o RecyclerView
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvItens.getContext(), DividerItemDecoration.VERTICAL);
-
-        // Adiciona a decoração de divisor ao RecyclerView
         rvItens.addItemDecoration(dividerItemDecoration);
+
+
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == NEW_ITEM_REQUEST){ //verifica se o resultado é 1
+            if(resultCode == Activity.RESULT_OK){ //verifica se está tudo ok
+
+
+                MyItem myItem = new MyItem(); //cria novo objeto da classe MyItem
+                myItem.title = data.getStringExtra("title"); // define o titulo
+                myItem.description = data.getStringExtra("description"); //define a descrição
+                Uri selectedPhotoUri = data.getData();
+
+                try{
+                    Bitmap photo = Util.getBitmap(MainActivity.this, selectedPhotoUri, 100, 100);
+                    myItem.photo = photo;
+                }catch (FileNotFoundException e){
+                    e.printStackTrace();
+                }
+
+                MainActivityViewModel vm = new ViewModelProvider(this).get(MainActivityViewModel.class);
+                List<MyItem> itens = vm.getItens();
+                //obtemos em seguida a lista de itens que o viewModel guarda e guardamos o novo item dentro dessa lista. dessa forma, os itens não estão mais guardados em mainActivity, mas sim em mainActivityViewModel
+
+                itens.add(myItem); // adiciona o item com todos seus valores definidos À tela principal
+                myAdapter.notifyItemInserted(itens.size()-1); //notifica que o item foi adicionado para que seja redesenhado no display
+            }
+        }
     }
 }

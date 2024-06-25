@@ -4,12 +4,11 @@ import android.graphics.Bitmap; // Importa a classe Bitmap para manipular bitmap
 
 // Declaração da classe pública MyItem
 public class MyItem {
-    // Declaração do campo público 'photo' do tipo Uri
+
+    //atributos da classe MyItem, representando foto, titulo e descrição
     public Bitmap photo;
-
-    // Declaração do campo público 'title' do tipo String
     public String title;
-
-    // Declaração do campo público 'description' do tipo String
     public String description;
+
+
 }

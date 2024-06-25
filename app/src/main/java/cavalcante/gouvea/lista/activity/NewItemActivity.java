@@ -1,11 +1,8 @@
 package cavalcante.gouvea.lista.activity; // Define o pacote da atividade
 
 // Importações necessárias para a atividade
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
-import androidx.lifecycle.ViewModelProvider;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -16,110 +13,96 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+
 import cavalcante.gouvea.lista.R;
-import cavalcante.gouvea.lista.model.NewItemActivityViewModel;
+import cavalcante.gouvea.lista.model.NewActivityViewModel;
 
 public class NewItemActivity extends AppCompatActivity {
 
-    // Constante para identificar a requisição de seleção de foto
     static int PHOTO_PICKER_REQUEST = 1;
 
-    // Uri para armazenar a foto selecionada
-    Uri photoSelected = null;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) { //Método Construtor dos novos itens
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_new_item); //definindo a tela
 
-    // Método chamado quando a atividade recebe um resultado de outra atividade
+        NewActivityViewModel vm = new ViewModelProvider( this ).get( NewActivityViewModel.class ); //Nessa linha o viewModel referente a NewItemActivity (NewItemActivityVieWModel) é obtido
+
+
+        Uri selectPhotoLocation = vm.getSelectPhotoLocation(); //obtemos o endereço URI guardado dentro do ViewModel
+        if(selectPhotoLocation != null) { // caso o endereço não seja nulo, isso significa que o usúario havia escolhido a imagem antes de rotacionar a tela
+            ImageView imvfotoPreview = findViewById(R.id.imvPhotoPreview);
+            imvfotoPreview.setImageURI(selectPhotoLocation);
+            // Setamos a imagem no ImageView da tela
+        }
+
+
+        ImageButton imgCI = findViewById(R.id.imbCI); //definindo o botão de escolher as imagens
+        imgCI.setOnClickListener(new View.OnClickListener() { //declarando um objeto que espera ser selecionado
+            @Override
+            public void onClick(View v) {
+                Intent photoPickerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT); //intenção declarada para escolher a foto
+                photoPickerIntent.setType("image/*"); //define a imagem
+                startActivityForResult(photoPickerIntent, PHOTO_PICKER_REQUEST); //começa a atividade enquanto esperar o intent retornar um valor
+            }
+        });
+
+        Button btnAddItem = findViewById(R.id.btnAddItem); //botão de adicionar item a lista
+        btnAddItem.setOnClickListener(new View.OnClickListener() { //objeto que vÊ se o botão foi apertado
+            @Override
+            public void onClick(View v){ //função que acontece caso o click aconteça
+
+                NewActivityViewModel vm = new ViewModelProvider( NewItemActivity.this ).get( NewActivityViewModel.class );
+
+                Uri photoSelected = vm.getSelectPhotoLocation();
+                if (photoSelected == null){ //condição que observa se a foto é valida
+                    Toast.makeText(NewItemActivity.this, "È necessário Selecionar uma imagem!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                EditText etTitle = findViewById(R.id.etTitle); //declara o titulo
+                String title = etTitle.getText().toString();
+
+                if(title.isEmpty()){ //verifica se o titulo é válido
+                    Toast.makeText(NewItemActivity.this, "É necessário Inserir um Título", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                EditText etDesc = findViewById(R.id.etDesc); //declara a descrição
+                String desc = etDesc.getText().toString();
+
+                if(desc.isEmpty()){  //verifica se a descrição é válida
+                    Toast.makeText(NewItemActivity.this, "È necessário inserir uma descrição", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                Intent i = new Intent(); //nova intent
+                i.setData(photoSelected); //adiciona a foto na intent para ser enviada pra outra tela
+                i.putExtra("title", title); //envia o titulo na intent
+                i.putExtra("description", desc); //envia a descrição na intent
+                setResult(Activity.RESULT_OK, i); //envia OK como resultado na intent
+                finish(); //finaliza a tela
+            }
+        });
+
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        // Verifica se o requestCode é o mesmo da requisição de seleção de foto e se o resultado foi OK
-        if (requestCode == PHOTO_PICKER_REQUEST && resultCode == Activity.RESULT_OK) {
-            // Armazena a Uri da foto selecionada
-            photoSelected = data.getData();
-
-            // Referência à ImageView para exibir a foto selecionada
-            ImageView imvPhotoPreview = findViewById(R.id.imvPhotoPreview);
-
-            // Define a Uri da foto selecionada na ImageView
-            imvPhotoPreview.setImageURI(photoSelected);
-        }
-    }
-
-    // Método chamado quando a atividade é criada
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_item);
-
-        NewItemActivityViewModel vm = new ViewModelProvider(this).get(NewItemActivityViewModel.class);
-
-        Uri selectPhotoLocation = vm.getSelectPhotoLocation(); // Corrige para chamar getSelectPhotoLocation()
-        if(selectPhotoLocation != null) {
-            ImageView imvPhotoPreview = findViewById(R.id.imvPhotoPreview);
-            imvPhotoPreview.setImageURI(selectPhotoLocation);
-        }
-
-        // Referência ao ImageButton para selecionar a foto
-        ImageButton imgCI = findViewById(R.id.imbCI);
-
-        // Define um listener para o ImageButton
-        imgCI.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Cria uma intenção para abrir o seletor de documentos para imagens
-                Intent photoPickerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                photoPickerIntent.setType("image/*");
-
-                // Inicia a atividade e espera um resultado
-                startActivityForResult(photoPickerIntent, PHOTO_PICKER_REQUEST);
+        if(requestCode == PHOTO_PICKER_REQUEST) {
+            if(resultCode == Activity.RESULT_OK){
+                Uri photoSelected = data.getData();
+                ImageView imvFotoPreview = findViewById(R.id.imvPhotoPreview);
+                imvFotoPreview.setImageURI(photoSelected);
+                NewActivityViewModel vm = new ViewModelProvider(this).get(NewActivityViewModel.class);
+                vm.setSelectPhotoLocation(photoSelected);
+                //Dentro do método onActivityResult obtemos o Viewmodel e guardamos dentro do ViewModel o endereço URI da imagem escolhida pelo usúario
             }
-        });
-
-        // Referência ao botão para adicionar um novo item
-        Button btnAddItem = findViewById(R.id.btnAddItem);
-
-        // Define um listener para o botão de adicionar item
-        btnAddItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Verifica se uma foto foi selecionada
-                if (photoSelected == null) {
-                    Toast.makeText(NewItemActivity.this, "É necessário selecionar uma imagem!", Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                // Referência ao campo de texto para o título
-                EditText etTitle = findViewById(R.id.etTitle);
-                String title = etTitle.getText().toString();
-
-                // Verifica se o título foi preenchido
-                if (title.isEmpty()) {
-                    Toast.makeText(NewItemActivity.this, "É necessário inserir um Título!", Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                // Referência ao campo de texto para a descrição
-                EditText etDesc = findViewById(R.id.etDesc);
-                String description = etDesc.getText().toString();
-
-                // Verifica se a descrição foi preenchida
-                if (description.isEmpty()) {
-                    Toast.makeText(NewItemActivity.this, "É necessário inserir uma descrição!", Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                // Cria uma intenção para enviar os dados de volta
-                Intent i = new Intent();
-                i.setData(photoSelected);
-                i.putExtra("title", title);
-                i.putExtra("description", description);
-
-                // Define o resultado como OK e envia a intenção
-                setResult(Activity.RESULT_OK, i);
-
-                // Finaliza a atividade
-                finish();
-            }
-        });
+        }
     }
 }
